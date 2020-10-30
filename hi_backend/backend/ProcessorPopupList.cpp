@@ -104,7 +104,7 @@ void ProcessorPopupItem::mouseUp(const MouseEvent& event)
 
 	if (c != nullptr)
 	{
-		Point<int> mouseUpPointInParent = c->getLocalPoint(this, event.getPosition());
+		juce::Point<int> mouseUpPointInParent = c->getLocalPoint(this, event.getPosition());
 
 		Component* upComponent = c->getComponentAt(mouseUpPointInParent);
 

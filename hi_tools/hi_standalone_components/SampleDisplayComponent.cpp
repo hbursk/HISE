@@ -143,7 +143,7 @@ int AudioDisplayComponent::SampleArea::getXForSample(int sample, bool relativeTo
 	
 
 
-	const int xInParent = getParentComponent()->getLocalPoint(parentWaveform, Point<int>(xInWaveform, 0)).getX();
+	const int xInParent = getParentComponent()->getLocalPoint(parentWaveform, juce::Point<int>(xInWaveform, 0)).getX();
 
 	return relativeToAudioDisplayComponent ? xInWaveform : xInParent;
 }
@@ -154,7 +154,7 @@ int AudioDisplayComponent::SampleArea::getSampleForX(int x, bool relativeToAudio
 	jassert(parentWaveform->getWidth() != 0);
 
 	if (!relativeToAudioDisplayComponent)
-		x = parentWaveform->getLocalPoint(getParentComponent(), Point<int>(x, 0)).getX();
+		x = parentWaveform->getLocalPoint(getParentComponent(), juce::Point<int>(x, 0)).getX();
 
 	const int widthOfWaveForm = parentWaveform->getWidth();
 	const double proportion = (double)x / (double)widthOfWaveForm;
@@ -793,7 +793,7 @@ void HiseAudioThumbnail::LoadingThread::calculatePath(Path &p, float width, cons
 		
 #if HISE_USE_SYMMETRIC_WAVEFORMS
 
-		Array<Point<float>> values;
+		Array<juce::Point<float>> values;
 
 		values.ensureStorageAllocated(numSamples / stride + 2);
 
@@ -832,7 +832,7 @@ void HiseAudioThumbnail::LoadingThread::calculatePath(Path &p, float width, cons
 
 			if (lastWasZero)
 			{
-				Point<float> newZero(values[i].x, 0.0f);
+				juce::Point<float> newZero(values[i].x, 0.0f);
 				values.insert(i, newZero);
 			}
 

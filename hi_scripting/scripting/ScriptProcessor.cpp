@@ -1260,12 +1260,12 @@ void JavascriptProcessor::DelayedPositionUpdater::scriptComponentUpdated(Identif
 		if (idThatWasChanged == xId)
 		{
 			int y = currentScriptComponent->getScriptObjectProperty(ScriptComponent::Properties::y);
-			newPosition = Point<int>((int)newValue, y);
+			newPosition = juce::Point<int>((int)newValue, y);
 		}
 		else if (idThatWasChanged == yId)
 		{
 			int x = currentScriptComponent->getScriptObjectProperty(ScriptComponent::Properties::x);
-			newPosition = Point<int>(x, (int)newValue);
+			newPosition = juce::Point<int>(x, (int)newValue);
 		}
 	}
 }

@@ -69,6 +69,8 @@ public:
 		LicenseExpired,
 		LicenseInvalid,
 		CriticalCustomErrorMessage,
+        InstallSamplesFromArchiveComplete,
+        InstallSamplesFromArchive,
 		SamplesNotInstalled,
 		SamplesNotFound,
 		CustomErrorMessage,
@@ -211,6 +213,12 @@ private:
 	ScopedPointer<TextButton> resolveSamplesButton;
 	ScopedPointer<TextButton> registerProductButton;
 	ScopedPointer<TextButton> ignoreButton;
+    ScopedPointer<TextButton> okayButton;
+    
+    ScopedPointer<CircularProgress> circularProgress;
+    ScopedPointer<RLottieComponent> animatedProgress;
+    
+    ScopedPointer<InstalledSampleArchiveImporter> sampleArchiveImporter;
 
 	BigInteger currentState;
 

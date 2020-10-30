@@ -629,8 +629,8 @@ int Font::getStringWidth (const String& text) const
 float Font::getStringWidthFloat (const String& text) const
 {
     // This call isn't thread-safe when there's a message thread running
-    jassert (MessageManager::getInstanceWithoutCreating() == nullptr
-               || MessageManager::getInstanceWithoutCreating()->currentThreadHasLockedMessageManager());
+//    jassert (MessageManager::getInstanceWithoutCreating() == nullptr
+//               || MessageManager::getInstanceWithoutCreating()->currentThreadHasLockedMessageManager());
 
     auto w = getTypeface()->getStringWidth (text);
 
@@ -643,8 +643,8 @@ float Font::getStringWidthFloat (const String& text) const
 void Font::getGlyphPositions (const String& text, Array<int>& glyphs, Array<float>& xOffsets) const
 {
     // This call isn't thread-safe when there's a message thread running
-    jassert (MessageManager::getInstanceWithoutCreating() == nullptr
-               || MessageManager::getInstanceWithoutCreating()->currentThreadHasLockedMessageManager());
+//    jassert (MessageManager::getInstanceWithoutCreating() == nullptr
+//               || MessageManager::getInstanceWithoutCreating()->currentThreadHasLockedMessageManager());
 
     getTypeface()->getGlyphPositions (text, glyphs, xOffsets);
 

@@ -813,6 +813,45 @@ class MuteAllScriptProcessor : public HardcodedScriptProcessor
 {
 public:
 
+    enum Parameters
+    {
+        IgnoreNotes = 0,
+        FixStuckNotes,
+        numParameters
+    };
+    
+    void setInternalAttribute(int parameterIndex, float newValue) override
+    {
+        switch (parameterIndex)
+        {
+            case IgnoreNotes:
+            {
+                ignore = newValue > 0.5;
+            }
+                break;
+                
+            case FixStuckNotes:
+            {
+                fix = newValue > 0.5;
+            }
+                break;
+        }
+    }
+    
+    float getAttribute(int parameterIndex) const override
+    {
+        switch (parameterIndex)
+        {
+            case IgnoreNotes:
+                return ignore ? 1.0 : 0;
+                
+            case FixStuckNotes:
+                return fix ? 1.0 : 0;
+        }
+        
+        return 0;
+    }
+
 	SET_PROCESSOR_NAME("MidiMuter", "MidiMuter", "Mutes the incoming note-on messages, but leaves everything else through.");
 
 	MuteAllScriptProcessor(MainController *mc, const String &id, ModulatorSynth *ms) :

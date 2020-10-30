@@ -67,7 +67,8 @@ public:
 
 	float getValue() const override
 	{
-		return FunctionType::save(p.get());
+        auto value = FunctionType::save(p.get());
+        return parameterRange.convertTo0to1(value);
 	}
 
 	void setValue(float newValue) override

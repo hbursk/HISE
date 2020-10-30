@@ -215,7 +215,7 @@ AudioSampleBuffer CompressionHelpers::loadFile(const File& f, double& speed)
 	fis.readIntoMemoryBlock(mb);
 
 
-	MemoryInputStream* mis = new MemoryInputStream(mb, false);
+	auto mis = new MemoryInputStream(mb, false);
 
 	ScopedPointer<AudioFormatReader> reader = afm.createReaderFor(mis);
 

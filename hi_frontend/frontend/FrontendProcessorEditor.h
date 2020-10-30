@@ -74,6 +74,18 @@ public:
 	{
 		return rootTile;
 	}
+    
+    void setSampleArchiveSuccessfullyInstalled(bool wasOK)
+    {
+        if (wasOK)
+        {
+            deactiveOverlay->setState(DeactiveOverlay::InstallSamplesFromArchiveComplete, true);
+            auto fp = dynamic_cast<FrontendProcessor*>(getAudioProcessor());
+            
+            GET_PROJECT_HANDLER(fp->getMainSynthChain()).setAllSampleReferencesCorrect();
+            fp->loadSamplesAfterRegistration();
+        }
+    }
 
 	void setSamplesCorrectlyInstalled(bool wasOK)
 	{

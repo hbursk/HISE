@@ -77,9 +77,27 @@ AudioProcessorEditor(fp)
 
     if(searchSamples && !fp->deactivatedBecauseOfMemoryLimitation)
     {
-        deactiveOverlay->setState(DeactiveOverlay::SamplesNotInstalled, !FrontendHandler::checkSamplesCorrectlyInstalled());
+        bool showModal = true;
+        if (!FrontendHandler::checkSamplesCorrectlyInstalled())
+        {
+            // let's check if we have an archive in the app data directory
+            auto appDataFolder = NativeFileHandler::getAppDataDirectory();
+            auto archive = appDataFolder.getChildFile("Samples.hr1");
+            
+            if (archive.existsAsFile())
+            {
+                showModal = false;
+                
+                deactiveOverlay->setState(DeactiveOverlay::InstallSamplesFromArchive, true);
+            }
+        }
         
-        deactiveOverlay->setState(DeactiveOverlay::SamplesNotFound, !GET_PROJECT_HANDLER(fp->getMainSynthChain()).areSamplesLoadedCorrectly());
+        if (showModal)
+        {
+            deactiveOverlay->setState(DeactiveOverlay::SamplesNotInstalled, !FrontendHandler::checkSamplesCorrectlyInstalled());
+            
+            deactiveOverlay->setState(DeactiveOverlay::SamplesNotFound, !GET_PROJECT_HANDLER(fp->getMainSynthChain()).areSamplesLoadedCorrectly());
+        }
     }
     else
     {

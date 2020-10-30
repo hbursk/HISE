@@ -152,12 +152,6 @@ void DialogWindowWithBackgroundThread::handleAsyncUpdate()
 		return;
 	}
 
-
-
-
-
-
-
 	threadFinished();
 
 	if (additionalFinishCallback)
@@ -355,7 +349,7 @@ ModalBaseWindow::ModalBaseWindow()
 {
 	s.colour = Colours::black;
 	s.radius = 20;
-	s.offset = Point<int>();
+	s.offset = juce::Point<int>();
 }
 
 ModalBaseWindow::~ModalBaseWindow()
@@ -745,10 +739,152 @@ File getDefaultSampleDestination()
 	return File();
 
 #endif
+}
 
-	
+InstalledSampleArchiveImporter::InstalledSampleArchiveImporter(ModalBaseWindow* mbw, CircularProgress* cp) :
+    juce::Thread("InstallArchive"),
+    modalBaseWindow(mbw),
+    synthChain(mbw->getMainController()->getMainSynthChain()),
+    result(Result::ok()),
+    circularProgress(cp)
+{
+#if USE_FRONTEND
 
+    auto appDataFolder = NativeFileHandler::getAppDataDirectory();
+    archiveFile = appDataFolder.getChildFile("Samples.hr1");
 
+    File sampleDestination = getDefaultSampleDestination();
+
+#endif
+
+    startThread(1);
+}
+
+InstalledSampleArchiveImporter::~InstalledSampleArchiveImporter()
+{
+    stopTimer();
+    stopThread(1000);
+}
+
+void InstalledSampleArchiveImporter::logVerboseMessage(const String& verboseMessage)
+{
+//#if USE_BACKEND
+//    debugToConsole(synthChain, verboseMessage);
+//#else
+//    ignoreUnused(verboseMessage);
+//#endif
+//
+}
+
+void InstalledSampleArchiveImporter::logStatusMessage(const String& message)
+{
+//    showStatusMessage(message);
+}
+
+void InstalledSampleArchiveImporter::criticalErrorOccured(const String& message)
+{
+//    PresetHandler::showStatusMessage(message);
+//    criticalError = message;
+}
+
+void InstalledSampleArchiveImporter::run()
+{
+    result = Result::fail("User pressed cancel");
+
+    auto md = getMetadata();
+
+    auto option = hlac::HlacArchiver::OverwriteOption::OverwriteIfNewer;
+    hlac::HlacArchiver::DecompressData data;
+
+    data.option = option;
+
+#if USE_BACKEND || HI_SUPPORT_FULL_DYNAMICS_HLAC
+    data.supportFullDynamics = true;
+#else
+    data.supportFullDynamics = false;
+#endif
+    data.sourceFile = getSourceFile();
+    data.targetDirectory = getTargetDirectory();
+    data.progress = &progress;
+    data.partProgress = &partProgress;
+    data.totalProgress = &totalProgress;
+
+    hlac::HlacArchiver decompressor(getCurrentThread());
+
+    decompressor.setListener(this);
+
+    bool ok = decompressor.extractSampleData(data);
+
+    if (!ok)
+    {
+        result = Result::fail("Something went wrong during extraction");
+        return;
+    }
+        
+
+#if USE_FRONTEND
+    FrontendHandler::setSampleLocation( getDefaultSampleDestination() );
+#endif
+
+    result = Result::ok();
+    
+    juce::MessageManager::callAsync([this]()
+    {
+        threadComplete();
+    });
+}
+
+void InstalledSampleArchiveImporter::threadComplete()
+{
+    if (criticalError.isNotEmpty())
+    {
+        PresetHandler::showMessageWindow("Error during sample installation", criticalError);
+    }
+    else if (!result.wasOk())
+    {
+        PresetHandler::showMessageWindow("Error during sample installation", result.getErrorMessage());
+    }
+    else
+    {
+
+#if USE_FRONTEND
+        auto fpe = dynamic_cast<FrontendProcessorEditor*>(modalBaseWindow);
+
+        fpe->setSampleArchiveSuccessfullyInstalled(true);
+#endif
+        modalBaseWindow->getMainController()->getUserPresetHandler().incPreset( true, false );
+
+        if (archiveFile.existsAsFile())
+        {
+            archiveFile.deleteFile();
+        }
+        
+    }
+}
+
+void InstalledSampleArchiveImporter::timerCallback()
+{
+    // circularProgress->progress( partProgress );
+}
+
+File InstalledSampleArchiveImporter::getTargetDirectory() const
+{
+#if USE_BACKEND
+    return GET_PROJECT_HANDLER(synthChain).getSubDirectory(ProjectHandler::SubDirectories::Samples);
+#else
+    return getDefaultSampleDestination();
+#endif
+}
+
+String InstalledSampleArchiveImporter::getMetadata() const
+{
+    return hlac::HlacArchiver::getMetadataJSON(getSourceFile());
+}
+
+File InstalledSampleArchiveImporter::getSourceFile() const
+{
+    auto appDataFolder = NativeFileHandler::getAppDataDirectory();
+    return appDataFolder.getChildFile("Samples.hr1");;
 }
 
 SampleDataImporter::SampleDataImporter(ModalBaseWindow* mbw) :

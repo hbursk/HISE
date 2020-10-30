@@ -25,12 +25,12 @@
 /*
   ==============================================================================
 
-   In accordance with the terms of the JUCE 5 End-Use License Agreement, the
+   In accordance with the terms of the JUCE 6 End-Use License Agreement, the
    JUCE Code in SECTION A cannot be removed, changed or otherwise rendered
    ineffective unless you have a JUCE Indie or Pro license, or are using JUCE
    under the GPL v3 license.
 
-   End User License Agreement: www.juce.com/juce-5-licence
+   End User License Agreement: www.juce.com/juce-6-licence
 
   ==============================================================================
 */
@@ -38,16 +38,14 @@
 // BEGIN SECTION A
 
 #ifndef JUCE_DISPLAY_SPLASH_SCREEN
- #define JUCE_DISPLAY_SPLASH_SCREEN 0
-#endif
-
-#ifndef JUCE_REPORT_APP_USAGE
- #define JUCE_REPORT_APP_USAGE 0
+ #define JUCE_DISPLAY_SPLASH_SCREEN 1
 #endif
 
 // END SECTION A
 
 #define JUCE_USE_DARK_SPLASH_SCREEN 1
+
+#define JUCE_PROJUCER_VERSION 0x60001
 
 //==============================================================================
 #define JUCE_MODULE_AVAILABLE_hi_backend                  1
@@ -157,10 +155,6 @@
  //#define CRASH_ON_GLITCH 0
 #endif
 
-#ifndef    HISE_ENABLE_EXPANSIONS
- #define   HISE_ENABLE_EXPANSIONS 1
-#endif
-
 #ifndef    ENABLE_SCRIPTING_BREAKPOINTS
  #define   ENABLE_SCRIPTING_BREAKPOINTS 1
 #endif
@@ -199,6 +193,10 @@
 
 #ifndef    USE_SPLASH_SCREEN
  //#define USE_SPLASH_SCREEN 0
+#endif
+
+#ifndef    HISE_USE_CUSTOM_EXPANSION_TYPE
+ //#define HISE_USE_CUSTOM_EXPANSION_TYPE 0
 #endif
 
 #ifndef    HISE_SAMPLE_DIALOG_SHOW_INSTALL_BUTTON
@@ -356,6 +354,10 @@
  //#define JUCE_PLUGINHOST_LADSPA 0
 #endif
 
+#ifndef    JUCE_CUSTOM_VST3_SDK
+ //#define JUCE_CUSTOM_VST3_SDK 0
+#endif
+
 //==============================================================================
 // juce_audio_utils flags:
 
@@ -440,8 +442,8 @@
 //==============================================================================
 // juce_events flags:
 
-#ifndef    JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK
- //#define JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK 0
+#ifndef    JUCE_EXECUTE_APP_SUSPEND_ON_BACKGROUND_TASK
+ //#define JUCE_EXECUTE_APP_SUSPEND_ON_BACKGROUND_TASK 0
 #endif
 
 //==============================================================================

@@ -30,43 +30,24 @@
 *   ===========================================================================
 */
 
-#include "JuceHeader.h"
+#pragma once
 
+#include <atomic>
 
-#include "resizable_height_component/ResizableHeightComponent.cpp"
+namespace hise { using namespace juce;
 
+class CircularProgress : public Component, private Timer
+{
+public:
+    CircularProgress();
 
-#include "keyboard/CustomKeyboard.cpp"
-#include "plugin_components/VoiceCpuBpmComponent.cpp"
-#include "plugin_components/PresetBrowserComponents.cpp"
-#include "plugin_components/PresetBrowser.cpp"
-#include "plugin_components/StandalonePopupComponents.cpp"
-#include "plugin_components/PanelTypes.cpp"
-#include "plugin_components/FrontendBar.cpp"
-#include "plugin_components/CircularProgress.cpp"
+    void paint( juce::Graphics& g ) override;
+    void timerCallback() override;
 
-#if HISE_INCLUDE_RLOTTIE
-#include "plugin_components/RainbowSpinner.cpp"
-#endif
+    void progress( double p );
 
-#include "markdown_components/MarkdownComponents.cpp"
-#include "markdown_components/MarkdownPreview.cpp"
+private:
+    std::atomic<double> m_progress{-1.0};
+};
 
-#if USE_BACKEND
-#include "plugin_components/PluginPreviewWindow.cpp"
-#endif
-
-
-#include "eq_plot/FilterInfo.cpp"
-#include "eq_plot/FilterGraph.cpp"
-#include "eq_plot/EqComponent.cpp"
-
-#include "floating_layout/FloatingLayout.cpp"
-#include "hi_expansion/ExpansionFloatingTiles.cpp"
-
-#include "midi_overlays/SimpleMidiViewer.cpp"
-#include "midi_overlays/MidiDropper.cpp"
-#include "midi_overlays/MidiLooper.cpp"
-#include "midi_overlays/MidiOverlayFactory.cpp"
-
-#include "wave_components/SampleComponents.cpp"
+}

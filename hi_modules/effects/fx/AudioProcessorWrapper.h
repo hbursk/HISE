@@ -512,12 +512,12 @@ private:
 	int currentSpeakerLayout;
 	AudioSampleBuffer scratchBuffer;
 
-	static Point<float> polarToCartesian(float r, float phi) noexcept
+	static juce::Point<float> polarToCartesian(float r, float phi) noexcept
 	{
-		return Point<float>(r * std::cos(phi), r * std::sin(phi));
+		return juce::Point<float>(r * std::cos(phi), r * std::sin(phi));
 	}
 
-		static float distance(Point<float> a, Point<float> b) noexcept
+		static float distance(juce::Point<float> a, juce::Point<float> b) noexcept
 	{
 		return std::sqrt(std::pow(a.x - b.x, 2.0f) + std::pow(a.y - b.y, 2.0f));
 	}

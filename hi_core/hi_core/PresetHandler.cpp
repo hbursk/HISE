@@ -992,7 +992,11 @@ void ProjectHandler::checkActiveProject()
 
 juce::File ProjectHandler::getAppDataRoot()
 {
-	const File::SpecialLocationType appDataDirectoryToUse = File::userApplicationDataDirectory;
+#if USE_COMMON_APP_DATA_FOLDER
+    const File::SpecialLocationType appDataDirectoryToUse = File::commonApplicationDataDirectory;
+#else
+    const File::SpecialLocationType appDataDirectoryToUse = File::userApplicationDataDirectory;
+#endif
 
 #if JUCE_IOS
 	return File::getSpecialLocation(appDataDirectoryToUse).getChildFile("Application Support/");
@@ -1276,6 +1280,8 @@ void FrontendHandler::loadSamplesAfterSetup()
 		LOG_START("Loading samples");
 
 		dynamic_cast<AudioProcessor*>(getMainController())->suspendProcessing(false);
+        
+        getMainController()->getSampleManager().setShouldSkipPreloading(true);
 
 		getMainController()->getSampleManager().preloadEverything();
 	}
@@ -1355,7 +1361,7 @@ void FrontendHandler::setSampleLocation(const File &newLocation)
 File FrontendHandler::getSampleLinkFile()
 {
 	File appDataDir = getAppDataDirectory();
-
+    
 	// The installer should take care of creating the app data directory...
 	jassert(appDataDir.isDirectory());
 

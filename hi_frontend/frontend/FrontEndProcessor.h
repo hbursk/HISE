@@ -127,6 +127,9 @@ public:
 		// This needs to be added independently from the usual plugin state because it's not supposed to be 
 		// a property of a user preset
 		v.setProperty("HostTempo", globalBPM, nullptr);
+        
+        v.setProperty("UserPreset", getUserPresetHandler().getCurrentlyLoadedFile().getFullPathName(), nullptr);
+
 
 		compressor.compress(v, destData);
 #else
@@ -189,6 +192,13 @@ public:
 		compressor.expand(mb, v);
 
 		globalBPM = v.getProperty("HostTempo", -1.0);
+        
+        const String userPresetName = v.getProperty("UserPreset").toString();
+
+        if (userPresetName.isNotEmpty())
+        {
+            getUserPresetHandler().setCurrentlyLoadedFile(File(userPresetName));
+        }
 
 		rawDataHolder->restoreFromValueTree(v);
 #else

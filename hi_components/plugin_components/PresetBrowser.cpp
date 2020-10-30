@@ -350,8 +350,6 @@ void PresetBrowserLookAndFeelMethods::drawPresetBrowserButtonText(Graphics& g, T
 	}
 }
 
-
-
 PresetBrowser::ModalWindow::ModalWindow(PresetBrowser* p) :
 	PresetBrowserChildComponentBase(p)
 {

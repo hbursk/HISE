@@ -85,7 +85,11 @@ END_JUCE_MODULE_DECLARATION
 #include "plugin_components/StandalonePopupComponents.h"
 
 #include "plugin_components/FrontendBar.h"
+#include "plugin_components/CircularProgress.h"
 
+#if HISE_INCLUDE_RLOTTIE
+#include "plugin_components/RainbowSpinner.h"
+#endif
 
 #if USE_BACKEND
 #include "plugin_components/PluginPreviewWindow.h"

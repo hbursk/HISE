@@ -713,7 +713,7 @@ public:
 
 	private:
 
-		Mode mode;
+		Mode mode = Mode::Text;
 
 		/** Changes the comboboxes's value. */
 		void updateUI(var newValue) override

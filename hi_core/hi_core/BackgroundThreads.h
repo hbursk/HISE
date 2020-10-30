@@ -534,6 +534,71 @@ private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SampleDataExporter)
 };
 
+class CircularProgress;
+class InstalledSampleArchiveImporter : public Thread,
+                                       public Timer,
+                                       public hlac::HlacArchiver::Listener
+{
+public:
+
+    enum class ErrorCode
+    {
+        OK = 0,
+        ProductMismatch,
+        VersionMismatch,
+        FileError,
+        numErrorCodes
+    };
+
+    InstalledSampleArchiveImporter(ModalBaseWindow* bpe_, CircularProgress* cp_);
+    virtual ~InstalledSampleArchiveImporter();
+
+    void run() override;
+    
+    void timerCallback() override;
+
+    void threadComplete();
+    
+    void logStatusMessage(const String& message) override;
+
+    void logVerboseMessage(const String& verboseMessage) override;
+
+    void criticalErrorOccured(const String& message) override;
+
+
+private:
+
+    File getTargetDirectory() const;
+
+    String getMetadata() const;
+
+    File getSourceFile() const;
+
+    void checkSanity(var metadata)
+    {
+
+    }
+
+    Result result;
+
+    String criticalError;
+
+    File archiveFile;
+
+    ScopedPointer<FilenameComponent> targetFile;
+    ScopedPointer<FilenameComponent> sampleDirectory;
+
+    double progress = 0.0;
+    double partProgress = 0.0;
+    double totalProgress = 0.0;
+
+    ModalBaseWindow* modalBaseWindow;
+
+    ModulatorSynthChain* synthChain;
+    
+    CircularProgress* circularProgress;
+};
+
 
 class SampleDataImporter : public DialogWindowWithBackgroundThread,
 	public hlac::HlacArchiver::Listener

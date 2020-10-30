@@ -1237,7 +1237,7 @@ void ProcessorEditorHeader::mouseDown(const MouseEvent &e)
 	const Rectangle<int> extendedFoldButtonBounds = foldButton->getBounds().expanded(10);
 	const Rectangle<int> extendedCloseButtonBounds = deleteButton->getBounds().expanded(10);
 
-	const Point<int> pos = e.getMouseDownPosition();
+	const juce::Point<int> pos = e.getMouseDownPosition();
 
 	if (addButton->isVisible() && extendedAddButtonBounds.contains(pos))
 	{
@@ -1478,7 +1478,7 @@ void ProcessorEditorHeader::refreshShapeButton(ShapeButton *b)
 	{
 		jassert(shadow != nullptr);
 
-		shadow->setShadowProperties(DropShadow(off ? Colours::transparentBlack : shadowColour, 3, Point<int>()));
+		shadow->setShadowProperties(DropShadow(off ? Colours::transparentBlack : shadowColour, 3, juce::Point<int>()));
 	}
 		
 	buttonColour = off ? Colours::grey.withAlpha(0.7f) : buttonColour;

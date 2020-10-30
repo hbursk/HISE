@@ -30,15 +30,15 @@
 *   ===========================================================================
 */
 
+
 namespace hise { using namespace juce;
+
 
 DeactiveOverlay::DeactiveOverlay(MainController* mc) :
 	ControlledObject(mc),
 	currentState(0)
 {
 	alaf = PresetHandler::createAlertWindowLookAndFeel();
-
-	
 
 	addAndMakeVisible(descriptionLabel = new Label());
 
@@ -55,18 +55,30 @@ DeactiveOverlay::DeactiveOverlay(MainController* mc) :
 	addAndMakeVisible(installSampleButton = new TextButton("Install Samples"));
 
 	addAndMakeVisible(ignoreButton = new TextButton("Ignore"));
-
+    addAndMakeVisible(okayButton = new TextButton("Okay"));
+    
+#if HISE_INCLUDE_RLOTTIE
+    addChildComponent(animatedProgress = new RLottieComponent(mc->getRLottieManager()));
+    animatedProgress->setBackgroundColour(Colours::transparentBlack);
+    
+    animatedProgress->loadAnimation(String(rainbow_json, rainbow_jsonSize), true);
+#else
+    addChildComponent(circularProgress = new CircularProgress());
+#endif
+    
 	resolveLicenseButton->setLookAndFeel(alaf);
 	resolveSamplesButton->setLookAndFeel(alaf);
 	registerProductButton->setLookAndFeel(alaf);
 	ignoreButton->setLookAndFeel(alaf);
 	installSampleButton->setLookAndFeel(alaf);
+    okayButton->setLookAndFeel(alaf);
 
 	resolveLicenseButton->addListener(this);
 	resolveSamplesButton->addListener(this);
 	registerProductButton->addListener(this);
 	ignoreButton->addListener(this);
 	installSampleButton->addListener(this);
+    okayButton->addListener(this);
 }
 
 void DeactiveOverlay::buttonClicked(Button *b)
@@ -87,6 +99,34 @@ void DeactiveOverlay::buttonClicked(Button *b)
 		l->setModalBaseWindowComponent(fpe);
 #endif
 	}
+    else if (b == okayButton)
+    {
+#if USE_FRONTEND
+        if (currentState[InstallSamplesFromArchiveComplete])
+        {
+            setState(InstallSamplesFromArchive, false);
+            setState(InstallSamplesFromArchiveComplete, false);
+        }
+        else if (currentState[InstallSamplesFromArchive])
+        {
+            auto fpe = findParentComponentOfClass<FrontendProcessorEditor>();
+            
+            // switch to circular progress
+            okayButton->setVisible(false);
+            descriptionLabel->setText("", dontSendNotification);
+            
+#if HISE_INCLUDE_RLOTTIE
+            animatedProgress->play();
+            animatedProgress->setVisible(true);
+#else
+            circularProgress->progress(-1);
+            circularProgress->setVisible(true);
+#endif
+            
+            sampleArchiveImporter = new InstalledSampleArchiveImporter(fpe, circularProgress);
+        }
+#endif
+    }
 	else if (b == resolveSamplesButton)
 	{
 		if (currentState[SamplesNotInstalled])
@@ -230,6 +270,12 @@ String DeactiveOverlay::getTextForError(State s) const
 	case DeactiveOverlay::AppDataDirectoryNotFound:
 		return "The application directory is not found. (The installation seems to be broken. Please reinstall this software.)";
 		break;
+    case DeactiveOverlay::InstallSamplesFromArchive:
+        return "This will just take a few rainbows.";
+        break;
+    case DeactiveOverlay::InstallSamplesFromArchiveComplete:
+        return "Success! Enjoy " + FrontendHandler::getProjectName() + " from " + FrontendHandler::getCompanyName() + ".";
+        break;
 	case DeactiveOverlay::SamplesNotFound:
 		return "The sample directory could not be located. \nClick below to choose the sample folder.";
 		break;
@@ -329,6 +375,16 @@ void DeactiveOverlay::resized()
 		resolveLicenseButton->setVisible(false);
 		registerProductButton->setVisible(false);
 		resolveSamplesButton->setVisible(false);
+        if (circularProgress)
+        {
+            circularProgress->setVisible(false);
+        }
+        
+        if (animatedProgress)
+        {
+            animatedProgress->setVisible(false);
+        }
+        
 		ignoreButton->setVisible(true);
 
 		ignoreButton->centreWithSize(200, 32);
@@ -340,19 +396,59 @@ void DeactiveOverlay::resized()
 		resolveLicenseButton->setVisible(false);
 		registerProductButton->setVisible(false);
 		resolveSamplesButton->setVisible(false);
+        if (circularProgress)
+        {
+            circularProgress->setVisible(false);
+        }
+        
+        if (animatedProgress)
+        {
+            animatedProgress->setVisible(false);
+        }
 		ignoreButton->setVisible(true);
 
 		ignoreButton->centreWithSize(200, 32);
 		ignoreButton->setButtonText("Ignore");
 	}
-	
+    
+    if (currentState[InstallSamplesFromArchive] || currentState[InstallSamplesFromArchiveComplete])
+    {
+        resolveLicenseButton->setVisible(false);
+        registerProductButton->setVisible(false);
+        installSampleButton->setVisible(false);
+        resolveSamplesButton->setVisible(false);
+        ignoreButton->setVisible(false);
+        if (circularProgress)
+        {
+            circularProgress->setVisible(false);
+            circularProgress->centreWithSize(128, 128);
+        }
+        
+        if (animatedProgress)
+        {
+            animatedProgress->setVisible(false);
+            animatedProgress->centreWithSize(512, 512);
+        }
+        
+        auto b = getLocalBounds().withSizeKeepingCentre(128, 40);
+
+        okayButton->setBounds(b.translated(0, 10));
+        okayButton->setVisible(true);
+    }
 
 	if (currentState[SamplesNotFound])
 	{
 		resolveLicenseButton->setVisible(false);
 		registerProductButton->setVisible(false);
-
-		
+        if (circularProgress)
+        {
+            circularProgress->setVisible(false);
+        }
+        
+        if (animatedProgress)
+        {
+            animatedProgress->setVisible(false);
+        }
 
 		resolveSamplesButton->setVisible(true);
 		ignoreButton->setVisible(true);
@@ -370,6 +466,15 @@ void DeactiveOverlay::resized()
 	{
 		resolveLicenseButton->setVisible(false);
 		registerProductButton->setVisible(false);
+        if (circularProgress)
+        {
+            circularProgress->setVisible(false);
+        }
+        
+        if (animatedProgress)
+        {
+            animatedProgress->setVisible(false);
+        }
 
 		auto b = getLocalBounds().withSizeKeepingCentre(200, 50);
 
@@ -406,7 +511,16 @@ void DeactiveOverlay::resized()
 		resolveSamplesButton->setVisible(false);
 		ignoreButton->setVisible(false);
         installSampleButton->setVisible(false);
+        if (circularProgress)
+        {
+            circularProgress->setVisible(false);
+        }
         
+        if (animatedProgress)
+        {
+            animatedProgress->setVisible(false);
+        }
+
 		resolveLicenseButton->centreWithSize(200, 32);
 		registerProductButton->centreWithSize(200, 32);
 
@@ -421,6 +535,15 @@ void DeactiveOverlay::resized()
 		resolveSamplesButton->setVisible(false);
         installSampleButton->setVisible(false);
 		ignoreButton->setVisible(false);
+        if (circularProgress)
+        {
+            circularProgress->setVisible(false);
+        }
+        
+        if (animatedProgress)
+        {
+            animatedProgress->setVisible(false);
+        }
 	}
 }
 
