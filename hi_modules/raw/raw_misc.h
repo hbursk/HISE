@@ -636,8 +636,7 @@ public:
 		
 		JUCE_DECLARE_NON_COPYABLE(Base);
 	};
-
-	
+    	
 
 	/** A connection between a Processor's parameter and a juce::Slider. */
 	template <int parameterIndex> class Slider: public Base<juce::Slider, float>

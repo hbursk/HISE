@@ -244,6 +244,10 @@ public:
     */
     int getScrollBarThickness() const;
 
+    /** If set to false, content will draw under the scrollbar. True by default.
+     */
+     void setClipBoundsForScrollbar (bool clip);
+
     /** Changes the distance that a single-step click on a scrollbar button
         will move the viewport.
     */
@@ -325,6 +329,7 @@ private:
     bool customScrollBarThickness = false;
     bool allowScrollingWithoutScrollbarV = false, allowScrollingWithoutScrollbarH = false;
     bool vScrollbarRight = true, hScrollbarBottom = true;
+    bool clipBoundsForScrollbar = true;
 
     struct DragToScrollListener;
     std::unique_ptr<DragToScrollListener> dragToScrollListener;

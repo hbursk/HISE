@@ -57,7 +57,15 @@ public:
             if (customComponent != nullptr)
             {
                 addAndMakeVisible (customComponent.get());
-                customComponent->setBounds (getLocalBounds());
+                const auto area = getLocalBounds();
+                auto width = area.getWidth();
+                auto height = area.getHeight();
+                if (customComponent->isTransformed())
+                {
+                    std::swap(width, height);
+                }
+                
+                customComponent->setBounds (0, 0, width, height);
             }
         }
     }
@@ -142,7 +150,17 @@ public:
     void resized() override
     {
         if (customComponent != nullptr)
-            customComponent->setBounds (getLocalBounds());
+        {
+            const auto area = getLocalBounds();
+            auto width = area.getWidth();
+            auto height = area.getHeight();
+            if (customComponent->isTransformed())
+            {
+                std::swap(width, height);
+            }
+            
+            customComponent->setBounds (0, 0, width, height);
+        }
     }
 
     String getTooltip() override

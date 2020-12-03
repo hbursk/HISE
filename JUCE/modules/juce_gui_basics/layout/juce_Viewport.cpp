@@ -340,6 +340,8 @@ void Viewport::resized()
 void Viewport::updateVisibleArea()
 {
     auto scrollbarWidth = getScrollBarThickness();
+    const auto scrollbarContentOffset = clipBoundsForScrollbar ? scrollbarWidth : 0;
+    const auto scrollbarPosOffset = clipBoundsForScrollbar ? 0 : scrollbarWidth;
     const bool canShowAnyBars = getWidth() > scrollbarWidth && getHeight() > scrollbarWidth;
     const bool canShowHBar = showHScrollbar && canShowAnyBars;
     const bool canShowVBar = showVScrollbar && canShowAnyBars;
@@ -359,10 +361,10 @@ void Viewport::updateVisibleArea()
             vBarVisible = canShowVBar && (vBarVisible || contentComp->getY() < 0 || contentComp->getBottom() > contentArea.getHeight());
 
             if (vBarVisible)
-                contentArea.setWidth (getWidth() - scrollbarWidth);
+                contentArea.setWidth (getWidth() - scrollbarContentOffset);
 
             if (hBarVisible)
-                contentArea.setHeight (getHeight() - scrollbarWidth);
+                contentArea.setHeight (getHeight() - scrollbarContentOffset);
 
             if (! contentArea.contains (contentComp->getBounds()))
             {
@@ -371,8 +373,8 @@ void Viewport::updateVisibleArea()
             }
         }
 
-        if (vBarVisible)  contentArea.setWidth  (getWidth()  - scrollbarWidth);
-        if (hBarVisible)  contentArea.setHeight (getHeight() - scrollbarWidth);
+        if (vBarVisible)  contentArea.setWidth  (getWidth()  - scrollbarContentOffset);
+        if (hBarVisible)  contentArea.setHeight (getHeight() - scrollbarContentOffset);
 
         if (! vScrollbarRight  && vBarVisible)
             contentArea.setX (scrollbarWidth);
@@ -404,7 +406,7 @@ void Viewport::updateVisibleArea()
     auto& hbar = getHorizontalScrollBar();
     auto& vbar = getVerticalScrollBar();
 
-    hbar.setBounds (contentArea.getX(), hScrollbarBottom ? contentArea.getHeight() : 0, contentArea.getWidth(), scrollbarWidth);
+    hbar.setBounds (contentArea.getX(), hScrollbarBottom ? contentArea.getHeight() - scrollbarPosOffset : 0, contentArea.getWidth(), scrollbarWidth);
     hbar.setRangeLimits (0.0, contentBounds.getWidth());
     hbar.setCurrentRange (visibleOrigin.x, contentArea.getWidth());
     hbar.setSingleStepSize (singleStepX);
@@ -413,7 +415,7 @@ void Viewport::updateVisibleArea()
     if (canShowHBar && ! hBarVisible)
         visibleOrigin.setX (0);
 
-    vbar.setBounds (vScrollbarRight ? contentArea.getWidth() : 0, contentArea.getY(), scrollbarWidth, contentArea.getHeight());
+    vbar.setBounds (vScrollbarRight ? contentArea.getWidth() - scrollbarPosOffset : 0, contentArea.getY(), scrollbarWidth, contentArea.getHeight());
     vbar.setRangeLimits (0.0, contentBounds.getHeight());
     vbar.setCurrentRange (visibleOrigin.y, contentArea.getHeight());
     vbar.setSingleStepSize (singleStepY);
@@ -507,6 +509,11 @@ void Viewport::setScrollBarThickness (const int thickness)
 int Viewport::getScrollBarThickness() const
 {
     return scrollBarThickness;
+}
+
+void Viewport::setClipBoundsForScrollbar (bool clip)
+{
+    clipBoundsForScrollbar = clip;
 }
 
 void Viewport::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)

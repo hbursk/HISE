@@ -20,6 +20,16 @@ class RLottieComponent: public Component,
 						private Timer
 {
 public:
+    
+    enum class PlaybackMode
+    {
+        LoopForward,
+        LoopBackward,
+        OneShotForward,
+        OneShotBackward,
+        Halfway,
+        HalfwayOffset
+    };
 
 	/** Creates a RLottieComponent. You have to pass in the global RLottieManager instance. 
 	
@@ -31,12 +41,14 @@ public:
 
 	/** Returns the current animation position. */
 	double getCurrentFrameNormalised() const;
+    
+    void play(PlaybackMode mode);
 	
 	/** Starts playing the animation with the given framerate. */
 	void play();
 
 	/** Stops the playback. */
-	void stop();
+	void stop(bool resetToStart = false);
 
 	/** Load an animation from the JSON code. */
 	void loadAnimation(const String& jsonCode, bool useOversampling=false);
@@ -67,6 +79,8 @@ private:
 	ScopedPointer<RLottieAnimation> currentAnimation;
 
 	WeakReference<RLottieManager> manager;
+    
+    PlaybackMode playbackMode = PlaybackMode::LoopForward;
 };
 
 }

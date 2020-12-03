@@ -30,9 +30,29 @@ void RLottieComponent::setFrameNormalised(double normalisedPosition)
 	}
 }
 
-void RLottieComponent::stop()
+void RLottieComponent::stop(bool resetToStart)
 {
 	stopTimer();
+    
+    if (resetToStart)
+    {
+        switch (playbackMode)
+        {
+            case PlaybackMode::LoopForward:
+            case PlaybackMode::OneShotForward:
+            case PlaybackMode::Halfway:
+                setFrameNormalised(0);
+                break;
+                
+            case PlaybackMode::LoopBackward:
+            case PlaybackMode::OneShotBackward:
+                setFrameNormalised(1);
+                break;
+            case PlaybackMode::HalfwayOffset:
+                setFrameNormalised(0.5);
+                break;
+        }
+    }
 }
 
 double RLottieComponent::getCurrentFrameNormalised() const
@@ -48,12 +68,34 @@ double RLottieComponent::getCurrentFrameNormalised() const
 	return 0.0;
 }
 
+void RLottieComponent::play(PlaybackMode mode)
+{
+    playbackMode = mode;
+    switch (mode)
+    {
+        case PlaybackMode::OneShotForward:
+        {
+            setFrameNormalised(0);
+            break;
+        }
+        case PlaybackMode::OneShotBackward:
+        {
+            setFrameNormalised(1);
+            break;
+        }
+        default:
+            break;
+    }
+    
+    play();
+}
+
 void RLottieComponent::play()
 {
 	if (currentAnimation != nullptr)
 	{
 		auto frameRate = currentAnimation->getFrameRate();
-
+        
 		if (frameRate > 0.0)
 			startTimer(1000.0 / frameRate);
 	}
@@ -131,7 +173,74 @@ void RLottieComponent::timerCallback()
 {
 	if (currentAnimation != nullptr && currentAnimation->getNumFrames() > 0)
 	{
-		currentFrame = (currentFrame + 1) % currentAnimation->getNumFrames();
+        switch (playbackMode)
+        {
+            case PlaybackMode::LoopForward:
+            {
+                currentFrame = (currentFrame + 1) % currentAnimation->getNumFrames();
+            }
+                break;
+                
+            case PlaybackMode::LoopBackward:
+            {
+                currentFrame = (currentFrame - 1);
+                if (currentFrame < 0)
+                {
+                    currentFrame = currentAnimation->getNumFrames() - 1;
+                }
+            }
+                break;
+                
+            case PlaybackMode::OneShotForward:
+            {
+                currentFrame = currentFrame + 1;
+                if ( currentFrame == currentAnimation->getNumFrames())
+                {
+                    stop();
+                }
+            }
+                break;
+                
+            case PlaybackMode::Halfway:
+            {
+                currentFrame = currentFrame + 1;
+                if ( currentFrame == currentAnimation->getNumFrames()/2 )
+                {
+                    stop();
+                }
+                else if (currentFrame == currentAnimation->getNumFrames())
+                {
+                    stop(true);
+                }
+            }
+                break;
+                
+            case PlaybackMode::OneShotBackward:
+            {
+                currentFrame = currentFrame - 1;
+                if ( currentFrame == 0 )
+                {
+                    stop();
+                }
+            }
+                break;
+
+            case PlaybackMode::HalfwayOffset:
+            {
+                currentFrame = currentFrame + 1;
+                if ( currentFrame == currentAnimation->getNumFrames()/2 )
+                {
+                    stop(true);
+                }
+                else if (currentFrame == currentAnimation->getNumFrames())
+                {
+                    stop();
+                    currentFrame = 0;
+                }
+            }
+                break;
+
+        }
 
 		repaint();
 	}

@@ -72,6 +72,7 @@ void MainController::UserPresetHandler::loadUserPreset(const File& f)
 		if (v.isValid())
 		{
 			loadUserPreset(v);
+            setCurrentlyLoadedFile(f);
 		}
 	}
 }
@@ -232,7 +233,6 @@ void MainController::UserPresetHandler::loadUserPresetInternal()
 
 		mc->getLockFreeDispatcher().callOnMessageThreadAfterSuspension(this, f);
 	}
-
 	
 
 	mc->getSampleManager().preloadEverything();
