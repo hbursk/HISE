@@ -38,21 +38,20 @@ MacroControlBroadcaster::MacroControlBroadcaster(ModulatorSynthChain *chain):
 	for(int i = 0; i < 8; i++)
 	{
 		macroControls.add(new MacroControlData(i, *this));
-		
 	}
 }
 
 
 /** Creates a new Parameter data object. */
-MacroControlBroadcaster::MacroControlledParameterData::MacroControlledParameterData(Processor *p, int  parameter_, const String &parameterName_, NormalisableRange<double> range_, bool readOnly):
+MacroControlBroadcaster::MacroControlledParameterData::MacroControlledParameterData(Processor *p, int  parameter_, const String &parameterName_, NormalisableRange<double> range_, bool readOnly_, bool inverted_):
 	controlledProcessor(p),
 	id(p->getId()),
 	parameter(parameter_),
 	parameterName(parameterName_),
 	range(range_),
 	parameterRange(range_),
-	inverted(false),
-	readOnly(readOnly)
+	inverted(inverted_),
+	readOnly(readOnly_)
 {};
 
 /** Restores a Parameter object from an exported XML document. 
@@ -68,6 +67,7 @@ MacroControlBroadcaster::MacroControlledParameterData::MacroControlledParameterD
 	readOnly(xml.getBoolAttribute("readonly", true))
 {
 	parameterRange = NormalisableRange<double>(xml.getDoubleAttribute("low", 0.0), xml.getDoubleAttribute("high", 1.0));
+    parameterRange.skew = xml.getDoubleAttribute("skew", 1.0);
 	inverted = xml.getBoolAttribute("inverted", false);
 	controlledProcessor = findProcessor(chain, id);
 }
@@ -112,13 +112,12 @@ XmlElement *MacroControlBroadcaster::MacroControlledParameterData::exportAsXml()
 {
 	XmlElement *entry = new XmlElement("controlled_parameter");
 
-	
-
 	entry->setAttribute("id", controlledProcessor->getId());
 	entry->setAttribute("parameter", parameter);
 	entry->setAttribute("parameter_name", parameterName);
 	entry->setAttribute("min", range.start);
 	entry->setAttribute("max", range.end);
+    entry->setAttribute("skew", parameterRange.skew);
 	entry->setAttribute("low", parameterRange.start);
 	entry->setAttribute("high", parameterRange.end);
 	entry->setAttribute("inverted", inverted);
@@ -231,7 +230,13 @@ void MacroControlBroadcaster::loadMacroValuesFromValueTree(const ValueTree &v)
 			const float value = (float)child->getDoubleAttribute("value", 0.0);
 
 			setMacroControl(i, value, sendNotification);
+            
+            sendMacroLoadedFromValueTreeMessage(i, value);
 		}
+        else
+        {
+            sendMacroLoadedFromValueTreeMessage(i, 0);
+        }
 	}
 }
 
@@ -372,13 +377,14 @@ bool MacroControlBroadcaster::MacroControlData::hasParameter(Processor *p, int p
 }
 
 
-void MacroControlBroadcaster::MacroControlData::addParameter(Processor *p, int parameterId, const String &parameterName, NormalisableRange<double> range, bool readOnly)
+void MacroControlBroadcaster::MacroControlData::addParameter(Processor *p, int parameterId, const String &parameterName, NormalisableRange<double> range, bool readOnly, bool inverted)
 {
 	controlledParameters.add(new MacroControlledParameterData(p,
 																parameterId,
 																parameterName,
 																range,
-																readOnly));
+																readOnly,
+                                                                inverted));
 
 	parent.sendMacroConnectionChangeMessage(macroIndex, p, parameterId, true);
 }
@@ -430,7 +436,8 @@ void MacroControlBroadcaster::addControlledParameter(int macroControllerIndex,
 							int parameterId, 
 							const String &parameterName,
 							NormalisableRange<double> range,
-							bool readOnly)
+							bool readOnly,
+                            bool inverted)
 {
 	Processor *p = findProcessor(thisAsSynth, processorId);
 
@@ -447,7 +454,7 @@ void MacroControlBroadcaster::addControlledParameter(int macroControllerIndex,
 		}
 
 
-		macroControls[macroControllerIndex]->addParameter(p, parameterId, parameterName, range, readOnly);
+		macroControls[macroControllerIndex]->addParameter(p, parameterId, parameterName, range, readOnly, inverted);
 
 		p->sendChangeMessage();
 		thisAsSynth->sendChangeMessage();

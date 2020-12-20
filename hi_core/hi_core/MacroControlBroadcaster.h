@@ -50,6 +50,8 @@ public:
 		virtual ~MacroConnectionListener() {};
 
 		virtual void macroConnectionChanged(int macroIndex, Processor* p, int parameterIndex, bool wasAdded) = 0;
+        
+        virtual void macroLoadedFromValueTree(int macroIndex, float value){};
 
 	private:
 
@@ -70,7 +72,7 @@ public:
 	public:
 
 		/** Creates a new Parameter data object. */
-		MacroControlledParameterData(Processor *p, int  parameter_, const String &parameterName_, NormalisableRange<double> range_, bool readOnly=true);
+		MacroControlledParameterData(Processor *p, int  parameter_, const String &parameterName_, NormalisableRange<double> range_, bool readOnly=true, bool inverted=false);
 
 		/** Restores a Parameter object from an exported XML document. 
 		*
@@ -183,6 +185,15 @@ public:
 				l->macroConnectionChanged(macroIndex, p, parameterIndex, wasAdded);
 		}
 	}
+    
+    void sendMacroLoadedFromValueTreeMessage(int macroIndex, float value)
+    {
+        for (auto l : macroListeners)
+        {
+            if (l != nullptr)
+                l->macroLoadedFromValueTree(macroIndex, value);
+        }
+    }
 
 	void addMacroConnectionListener(MacroConnectionListener* l)
 	{
@@ -254,7 +265,7 @@ public:
 		bool hasParameter(Processor *p, int parameterIndex);
 
 		/** adds the parameter to the parameter list and renames the macro if it is the only parameter. */
-		void addParameter(Processor *p, int parameterId, const String &parameterName, NormalisableRange<double> range, bool readOnly=true);
+		void addParameter(Processor *p, int parameterId, const String &parameterName, NormalisableRange<double> range, bool readOnly=true, bool inverted=false);
 
 		/** Removes the parameter. */
 		void removeParameter(int parameterIndex);
@@ -376,7 +387,8 @@ public:
 								int parameterId, 
 								const String &parameterName,
 								NormalisableRange<double> range,
-								bool readOnly=true);
+								bool readOnly=true,
+                                bool inverted=false);
 
 	/** Returns the MacroControlData object at the supplied index. */
 	MacroControlData *getMacroControlData(int index) { return macroControls[index];	}

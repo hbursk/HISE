@@ -966,7 +966,7 @@ public:
 
     static bool shouldThrottleRepaint()
     {
-        return areAnyWindowsInLiveResize() || ! JUCEApplication::isStandaloneApp();
+        return areAnyWindowsInLiveResize();// || ! JUCEApplication::isStandaloneApp();
     }
 
     void timerCallback() override

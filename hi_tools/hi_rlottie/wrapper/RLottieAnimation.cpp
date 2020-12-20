@@ -14,8 +14,9 @@ namespace hise {
 using namespace juce;
 
 
-RLottieAnimation::RLottieAnimation(RLottieManager* manager, const String& data)
+RLottieAnimation::RLottieAnimation(RLottieManager* manager_, const String& data)
 {
+    manager = manager_;
 	animation = manager->createAnimation(RLottieComponent::decompressIfBase64(data));
 	rf = manager->getRenderFunction();
 

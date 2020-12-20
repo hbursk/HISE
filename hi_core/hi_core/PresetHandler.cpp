@@ -1347,6 +1347,12 @@ void FrontendHandler::setSampleLocation(const File &newLocation)
 
 	auto linkFile = getSampleLinkFile();
 
+    if (!linkFile.existsAsFile())
+    {
+        // HAB: do we create it here?
+        linkFile.create();
+    }
+    
 	linkFile.replaceWithText(newLocation.getFullPathName());
 
 #else

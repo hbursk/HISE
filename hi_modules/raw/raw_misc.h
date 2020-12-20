@@ -653,6 +653,7 @@ public:
 		/** Updates the Processor's parameter. */
 		void sliderValueChanged(juce::Slider*) override;
 	};
+    
 
 	/** A connection between a Processor's parameter and a juce::Button.
 	

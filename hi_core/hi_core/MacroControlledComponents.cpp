@@ -322,8 +322,6 @@ void MacroControlledObject::initMacroControl(NotificationType notify)
 	if (notify == sendNotification)
 	{
 		getProcessor()->getMainController()->getMainSynthChain()->sendChangeMessage();
-
-		
 	}
 #endif
 }
