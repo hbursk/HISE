@@ -478,6 +478,21 @@ Processor *ProcessorHelpers::getFirstProcessorWithName(const Processor *root, co
 	return nullptr;
 }
 
+Processor *ProcessorHelpers::getFirstProcessorWithNameSubstring(const Processor *root, const String &name)
+{
+    Processor::Iterator<Processor> iter(const_cast<Processor*>(root), false);
+
+    Processor *p;
+
+    while((p = iter.getNextProcessor()) != nullptr)
+    {
+        if(p->getId().contains(name)) return p;
+    }
+
+    return nullptr;
+}
+
+
 
 Array<WeakReference<Processor>> ProcessorHelpers::getListOfAllGlobalModulators(const Processor* rootProcessor)
 {

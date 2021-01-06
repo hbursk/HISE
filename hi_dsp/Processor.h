@@ -991,6 +991,8 @@ public:
 	*	To avoid this, use PresetHandler::findProcessorsWithDuplicateId...
 	*/
 	static Processor *getFirstProcessorWithName(const Processor *rootProcessor, const String &name);
+    
+    static Processor *getFirstProcessorWithNameSubstring(const Processor *rootProcessor, const String &name);
 
 	static Array<WeakReference<Processor>> getListOfAllGlobalModulators(const Processor* rootProcessor);
 
