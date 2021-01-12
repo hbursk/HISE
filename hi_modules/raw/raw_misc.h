@@ -423,7 +423,7 @@ template <typename DataType> struct Data
 			{
 				if (auto spData = sp->getSliderPackData(sliderPackIndex))
 				{
-					spData->fromBase64(String(newValue));
+					spData->fromBase64(newValue.toString());
 				}
 				else
 					jassertfalse; // no sliderpack at the given index.
@@ -676,7 +676,7 @@ public:
 		/** Changes the button's toggle state. */
 		void updateUI(bool newValue) override
 		{
-			getComponent().setToggleState(newValue, dontSendNotification);
+			getComponent().setToggleState(newValue, dontSendNotification, sendNotification);
 		}
 
 		void buttonClicked(juce::Button*) override
