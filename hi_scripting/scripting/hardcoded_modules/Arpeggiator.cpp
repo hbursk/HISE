@@ -369,7 +369,7 @@ void Arpeggiator::onNoteOn()
 		mpeValues.slideValues[channel] = 64;
 	}
 
-	if(killIncomingNotes || mpeMode)
+	if(killIncomingNotes || mpeMode || dontLetInitialNotePlay)
 		Message.ignoreEvent(true);
 
 	minNoteLenSamples = (int)(Engine.getSampleRate() / 80.0);

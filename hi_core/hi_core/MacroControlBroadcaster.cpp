@@ -418,14 +418,13 @@ void MacroControlBroadcaster::setMacroControl(int macroIndex, float newValue, No
 	{
 		thisAsSynth->sendChangeMessage();
 
+#if USE_BACKEND
 		AudioProcessor *p = dynamic_cast<AudioProcessor*>(thisAsSynth->getMainController());
-
-		jassert(p != nullptr);
+        jassert(p != nullptr);
 
 		// Skip sending parameter changes before everything is loaded
 		if(macroIndex >= p->getNumParameters()) return;
 
-#if USE_BACKEND
 		p->setParameterNotifyingHost(macroIndex, newValue / 127.0f);
 #endif
 	}

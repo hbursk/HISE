@@ -110,6 +110,15 @@ void MainController::MacroManager::setMidiControllerForMacro(int macroIndex, int
 	if (macroIndex < 8)
 	{
 		macroControllerNumbers[macroIndex] = midiControllerNumber;
+        getMacroChain()->getMacroControlData(macroIndex)->setMidiController(midiControllerNumber);
+        
+        if ( midiControllerNumber >= 0 )
+        {
+            // have to set this midi automation handler too
+            auto handler = getMidiControlAutomationHandler();
+            handler->addMidiControlledParameter(mc->getMainSynthChain(), 0, {0, 1}, macroIndex);
+            handler->setUnlearndedMidiControlNumber(midiControllerNumber, sendNotification);
+        }
 	}
 }
 

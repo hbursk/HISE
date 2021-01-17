@@ -35,6 +35,8 @@ public:
 	
 		After you've created an instance, call loadAnimation() and then either play() or setFrameNormalised(). */
 	RLottieComponent(RLottieManager* manager_);
+    
+    virtual ~RLottieComponent();
 
 	/** Sets the frame with a normalised value (0...1). */
 	void setFrameNormalised(double normalisedPosition);

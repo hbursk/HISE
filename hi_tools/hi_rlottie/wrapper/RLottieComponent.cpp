@@ -19,6 +19,11 @@ RLottieComponent::RLottieComponent(RLottieManager* manager_) :
 	setOpaque(true);
 }
 
+RLottieComponent::~RLottieComponent()
+{
+    stop();
+}
+
 void RLottieComponent::setFrameNormalised(double normalisedPosition)
 {
 	if (currentAnimation != nullptr)

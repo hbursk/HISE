@@ -110,6 +110,7 @@ public:
 private:
 
 	bool killIncomingNotes = true;
+    bool dontLetInitialNotePlay = true;
 
 	void sendNoteOff(int eventId);
 

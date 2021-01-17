@@ -432,6 +432,25 @@ template <typename DataType> struct Data
 				jassertfalse; // no slider pack processor.
 		}
 	};
+    
+    /** Loads / saves a Macro's value. Expects values as 0 to 1*/
+    template <int macroIndex> struct Macro
+    {
+        static DataType save(Processor* p)
+        {
+            auto value = p->getMainController()->getMacroManager().getMacroChain()->getMacroControlData(macroIndex)->getCurrentValue();
+
+            return static_cast<DataType>(value/127.0);
+        }
+
+        static void load(Processor* p, const DataType& newValue)
+        {
+            p->getMainController()->getMacroManager().getMacroChain()->setMacroControl( macroIndex, newValue * 127, sendNotification );
+            
+            p->getMainController()->getMacroManager().getMacroChain()->sendMacroChangedByAutomationMessage( macroIndex, newValue * 127 );
+        }
+    };
+
 
 	Data(const Identifier& id_) :
 		id(id_)
@@ -676,6 +695,7 @@ public:
 		/** Changes the button's toggle state. */
 		void updateUI(bool newValue) override
 		{
+            //getComponent().setToggleState(newValue, dontSendNotification);
 			getComponent().setToggleState(newValue, dontSendNotification, sendNotification);
 		}
 

@@ -52,6 +52,8 @@ public:
 		virtual void macroConnectionChanged(int macroIndex, Processor* p, int parameterIndex, bool wasAdded) = 0;
         
         virtual void macroLoadedFromValueTree(int macroIndex, float value){};
+        
+        virtual void macroChangedByAutomation(int macroIndex, float value){};
 
 	private:
 
@@ -194,6 +196,16 @@ public:
                 l->macroLoadedFromValueTree(macroIndex, value);
         }
     }
+    
+    void sendMacroChangedByAutomationMessage(int macroIndex, float value)
+    {
+        for (auto l : macroListeners)
+        {
+            if (l != nullptr)
+                l->macroChangedByAutomation(macroIndex, value);
+        }
+    }
+
 
 	void addMacroConnectionListener(MacroConnectionListener* l)
 	{

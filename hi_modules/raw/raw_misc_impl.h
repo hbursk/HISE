@@ -165,7 +165,8 @@ void hise::raw::UIConnection::Base<ComponentType, ValueType>::parameterChangedFr
 			undoManager->perform(new UndoableUIAction(*this, newValue));
 		}
 	}
-	
+    
+    lastValue = newValue;
 }
 
 template <int parameterIndex>
