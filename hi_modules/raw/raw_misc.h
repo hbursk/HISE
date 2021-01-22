@@ -450,6 +450,21 @@ template <typename DataType> struct Data
             p->getMainController()->getMacroManager().getMacroChain()->sendMacroChangedByAutomationMessage( macroIndex, newValue * 127 );
         }
     };
+    
+    /** Loads / saves the tonal key for the preset. Uses the TonalKey enum. */
+    struct SourceKey
+    {
+        static DataType save(Processor* p)
+        {
+            auto key = static_cast<int>(p->getMainController()->getSourceKey());
+            return static_cast<DataType>(key);
+        }
+        
+        static void load(Processor* p, const DataType& newValue)
+        {
+            p->getMainController()->setSourceKey(static_cast<TonalKey>(static_cast<int>(newValue)));
+        }
+    };
 
 
 	Data(const Identifier& id_) :

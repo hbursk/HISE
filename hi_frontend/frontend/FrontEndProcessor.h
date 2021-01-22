@@ -129,7 +129,8 @@ public:
 		v.setProperty("HostTempo", globalBPM, nullptr);
         
         v.setProperty("UserPreset", getUserPresetHandler().getCurrentlyLoadedFile().getFullPathName(), nullptr);
-
+        
+        v.setProperty("TargetKey", static_cast<int>(getTargetKey()), nullptr);
 
 		compressor.compress(v, destData);
 #else
@@ -201,6 +202,10 @@ public:
         }
 
 		rawDataHolder->restoreFromValueTree(v);
+        
+        // after we restore the source key, restore the target key
+        int targetKey = v.getProperty("TargetKey", static_cast<int>(TonalKey::None));
+        setTargetKey(static_cast<TonalKey>(targetKey));
 #else
         
 		ValueTree v = ValueTree::readFromData(data, sizeInBytes);

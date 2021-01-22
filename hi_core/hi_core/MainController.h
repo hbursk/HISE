@@ -35,6 +35,75 @@
 
 namespace hise { using namespace juce;
 
+enum TonalKey
+{
+    C = 0,
+    Csharp, // 1
+    D, // 2
+    Dsharp, // 3
+    E, // 4
+    F, // 5
+    Fsharp, // 6
+    G, // 7
+    Gsharp, // 8
+    A, // 9
+    Asharp, // 10
+    B, // 11
+    NumKeys, // 12
+    None // 13
+};
+
+[[maybe_unused]] static String tonalKeyToString(TonalKey key, bool asFlats = false)
+{
+    switch (key)
+    {
+        case TonalKey::NumKeys:
+        case TonalKey::None:
+            return "";
+            
+        case TonalKey::C:
+            return "C";
+            
+        case TonalKey::Csharp:
+            return asFlats ? String(L"D♭") : String(L"C♯");
+            
+        case TonalKey::D:
+            return "D";
+            
+        case TonalKey::Dsharp:
+            return asFlats ? String(L"E♭") : String(L"D♯");
+
+        case TonalKey::E:
+            return "E";
+            
+        case TonalKey::F:
+            return "F";
+            
+        case TonalKey::Fsharp:
+            return asFlats ? String(L"G♭") : String(L"F♯");
+
+        case TonalKey::G:
+            return "G";
+            
+        case TonalKey::Gsharp:
+            return asFlats ? String(L"A\u266d") : String(L"G\u266f");
+            
+        case TonalKey::A:
+            return "A";
+            
+        case TonalKey::Asharp:
+            return asFlats ? String(L"B♭") : String(L"A♯");
+
+        case TonalKey::B:
+            return "B";
+            
+        default:
+            return "";
+    }
+    
+    return "";
+}
+
 class ProjectDocDatabaseHolder;
 
 /** The grand central station of HISE.
@@ -1415,6 +1484,32 @@ public:
         return globalPitchFactor;
     }
     
+    /** This sets the source key. */
+    void setSourceKey(TonalKey key)
+    {
+        sourceKey = key;
+        updateTonalKey();
+    }
+    
+    /** This gets the source key. */
+    TonalKey getSourceKey()
+    {
+        return sourceKey;
+    }
+    
+    /** This sets the target key. */
+    void setTargetKey(TonalKey key)
+    {
+        targetKey = key;
+        updateTonalKey();
+    }
+    
+    /** This gets the target key. */
+    TonalKey getTargetKey()
+    {
+        return targetKey;
+    }
+    
     /** This returns the global pitch factor as semitones. 
     *
     *   This can be used for displaying / saving purposes.
@@ -1538,6 +1633,32 @@ protected:
 	void killAndCallOnAudioThread(const ProcessorFunction& f);
 
 	void killAndCallOnLoadingThread(const ProcessorFunction& f);
+    
+    void updateTonalKey()
+    {
+        if (sourceKey == TonalKey::None ||
+            targetKey == TonalKey::None )
+        {
+            setGlobalPitchFactor(0);
+        }
+        else
+        {
+            // both source key and tonal key has values
+            auto diff = static_cast<int>(targetKey) - static_cast<int>(sourceKey);
+            
+            // if too far, go up or down an octave
+            if ( diff <= -7 )
+            {
+                diff += 12;
+            }
+            else if ( diff >= 7 )
+            {
+                diff -= 12;
+            }
+            
+            setGlobalPitchFactor(diff);
+        }
+    }
 
 	
 
@@ -1689,6 +1810,8 @@ private:
 	bool enablePluginParameterUpdate;
 
     double globalPitchFactor;
+    TonalKey sourceKey = TonalKey::None;
+    TonalKey targetKey = TonalKey::None;
     
     std::atomic<double> bpm;
 	std::atomic<double> bpmFromHost;
