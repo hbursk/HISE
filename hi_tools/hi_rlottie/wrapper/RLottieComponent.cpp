@@ -28,7 +28,7 @@ void RLottieComponent::setFrameNormalised(double normalisedPosition)
 {
 	if (currentAnimation != nullptr)
 	{
-		auto frameIndex = roundToInt(normalisedPosition * (double)currentAnimation->getNumFrames());
+		auto frameIndex = roundToInt(normalisedPosition * ((double)currentAnimation->getNumFrames() - 1));
 
 		currentFrame = frameIndex;
 		repaint();

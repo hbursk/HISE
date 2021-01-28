@@ -27,6 +27,7 @@
 namespace juce
 {
 
+
 Viewport::Viewport (const String& name)  : Component (name)
 {
     // content holder is used to clip the contents so they don't overlap the scrollbars
@@ -556,8 +557,14 @@ bool Viewport::useMouseWheelMoveIfNeeded (const MouseEvent& e, const MouseWheelD
 
         if (canScrollHorz || canScrollVert)
         {
-            auto deltaX = rescaleMouseWheelDistance (wheel.deltaX, singleStepX);
-            auto deltaY = rescaleMouseWheelDistance (wheel.deltaY, singleStepY);
+            auto newWheel = MouseWheelDetails(wheel);
+            if (getParentComponent()->isTransformed())
+            {
+                std::swap(newWheel.deltaX, newWheel.deltaY);
+            }
+            
+            auto deltaX = rescaleMouseWheelDistance (newWheel.deltaX, singleStepX);
+            auto deltaY = rescaleMouseWheelDistance (newWheel.deltaY, singleStepY);
 
             auto pos = getViewPosition();
 
