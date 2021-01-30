@@ -127,6 +127,9 @@ public:
 
 		ProcessorHelpers::increaseBufferIfNeeded(leftDelayFrames, samplesPerBlock);
 		ProcessorHelpers::increaseBufferIfNeeded(rightDelayFrames, samplesPerBlock);
+        
+        lowPassFilter.setCoefficients(IIRCoefficients::makeLowPass(sampleRate, lowPassFreq));
+        highPassFilter.setCoefficients(IIRCoefficients::makeHighPass(sampleRate, hiPassFreq));
 	};
 
 	void calcDelayTimes()
@@ -146,9 +149,6 @@ public:
 
 		const float actualRightTime = tempoSync ? TempoSyncer::getTempoInMilliSeconds(getMainController()->getBpm(), syncTimeRight) :
 			delayTimeRight;
-
-
-		
 
         leftDelay.setDelayTimeSeconds(actualLeftTime * 0.001);
         rightDelay.setDelayTimeSeconds(actualRightTime * 0.001);
@@ -170,8 +170,12 @@ public:
         
         while(--numSamples >= 0)
         {
-            leftDelayFrames.setSample(0, startSample, (float)leftDelay.getDelayedValue(inputL[startSample] + feedbackLeft * leftDelayFrames.getSample(0, startSample)));
-            rightDelayFrames.setSample(0, startSample, (float)rightDelay.getDelayedValue(inputR[startSample] + feedbackRight * rightDelayFrames.getSample(0, startSample)));
+            auto left = (float)leftDelay.getDelayedValue(inputL[startSample] + feedbackLeft * leftDelayFrames.getSample(0, startSample));
+            auto right = (float)rightDelay.getDelayedValue(inputR[startSample] + feedbackRight * rightDelayFrames.getSample(0, startSample));
+            left = highPassFilter.processSingleSampleRaw(lowPassFilter.processSingleSampleRaw( left ));
+            right = highPassFilter.processSingleSampleRaw(lowPassFilter.processSingleSampleRaw( right ));
+            leftDelayFrames.setSample(0, startSample, left);
+            rightDelayFrames.setSample(0, startSample, right);
             
             ++startSample;
         }
@@ -228,6 +232,9 @@ private:
     
     DelayLine<> leftDelay;
     DelayLine<> rightDelay;
+    
+    IIRFilter lowPassFilter;
+    IIRFilter highPassFilter;
 
 	bool skipFirstBuffer;
 };

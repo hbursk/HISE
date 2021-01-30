@@ -46,7 +46,9 @@ DelayEffect::DelayEffect(MainController *mc, const String &id) :
 	syncTimeRight(TempoSyncer::Quarter),
 	skipFirstBuffer(true),
 	leftDelayFrames(1, 0),
-	rightDelayFrames(1, 0)
+	rightDelayFrames(1, 0),
+    lowPassFilter(),
+    highPassFilter()
 {
 	finaliseModChains();
 
@@ -103,8 +105,20 @@ void DelayEffect::setInternalAttribute(int parameterIndex, float newValue)
 							break;
 	case FeedbackLeft:		feedbackLeft = newValue; break;
 	case FeedbackRight:		feedbackRight = newValue; break;
-	case LowPassFreq:		lowPassFreq = newValue; break;
-	case HiPassFreq:		hiPassFreq = newValue; break;
+	case LowPassFreq:
+            lowPassFreq = newValue;
+            if (getSampleRate() > 0)
+            {
+                lowPassFilter.setCoefficients(IIRCoefficients::makeLowPass(getSampleRate(), lowPassFreq));
+            }
+            break;
+	case HiPassFreq:
+            hiPassFreq = newValue;
+            if (getSampleRate() > 0)
+            {
+                highPassFilter.setCoefficients(IIRCoefficients::makeHighPass(getSampleRate(), hiPassFreq));
+            }
+            break;
 	case Mix:				mix = newValue; break;
 	case TempoSync:			tempoSync = (newValue == 1.0f); 
 							calcDelayTimes(); break;

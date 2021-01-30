@@ -558,7 +558,7 @@ bool Viewport::useMouseWheelMoveIfNeeded (const MouseEvent& e, const MouseWheelD
         if (canScrollHorz || canScrollVert)
         {
             auto newWheel = MouseWheelDetails(wheel);
-            if (getParentComponent()->isTransformed())
+            if (getParentComponent()->isTransformed() && wheel.isSmooth)
             {
                 std::swap(newWheel.deltaX, newWheel.deltaY);
             }
