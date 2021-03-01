@@ -259,6 +259,11 @@ struct Viewport::DragToScrollListener   : private MouseListener,
 
             if (isDragging)
             {
+                if (viewport.getParentComponent()->isTransformed())
+                {
+                    std::swap(totalOffset.x, totalOffset.y);
+                }
+
                 offsetX.drag (totalOffset.x);
                 offsetY.drag (totalOffset.y);
             }

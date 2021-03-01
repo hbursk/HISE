@@ -354,10 +354,6 @@
  //#define JUCE_PLUGINHOST_LADSPA 0
 #endif
 
-#ifndef    JUCE_CUSTOM_VST3_SDK
- //#define JUCE_CUSTOM_VST3_SDK 0
-#endif
-
 //==============================================================================
 // juce_audio_utils flags:
 
@@ -442,8 +438,8 @@
 //==============================================================================
 // juce_events flags:
 
-#ifndef    JUCE_EXECUTE_APP_SUSPEND_ON_BACKGROUND_TASK
- //#define JUCE_EXECUTE_APP_SUSPEND_ON_BACKGROUND_TASK 0
+#ifndef    JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK
+ //#define JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK 0
 #endif
 
 //==============================================================================

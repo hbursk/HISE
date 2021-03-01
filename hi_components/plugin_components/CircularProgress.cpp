@@ -43,6 +43,11 @@ CircularProgress::CircularProgress()
     setInterceptsMouseClicks( false, false );
 }
 
+CircularProgress::~CircularProgress()
+{
+    stopTimer();
+}
+
 void CircularProgress::paint( juce::Graphics& g )
 {
     if ( m_progress < 0 || m_progress > 1.0 )

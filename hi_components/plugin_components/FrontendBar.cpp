@@ -268,24 +268,24 @@ String DeactiveOverlay::getTextForError(State s) const
 	switch (s)
 	{
 	case DeactiveOverlay::AppDataDirectoryNotFound:
-		return "The application directory is not found. (The installation seems to be broken. Please reinstall this software.)";
+		return TRANS("The application directory is not found. (The installation seems to be broken. Please reinstall this software.)");
 		break;
     case DeactiveOverlay::InstallSamplesFromArchive:
-        return "This will just take a few rainbows.";
+        return TRANS("Welcome! We're going to do some setup.\nEnjoy the rainbows.");
         break;
     case DeactiveOverlay::InstallSamplesFromArchiveComplete:
-        return "Success! Enjoy " + FrontendHandler::getProjectName() + " from " + FrontendHandler::getCompanyName() + ".";
+        return TRANS("Success! Enjoy " + FrontendHandler::getProjectName() + " from " + FrontendHandler::getCompanyName() + ".");
         break;
 	case DeactiveOverlay::SamplesNotFound:
-		return "The sample directory could not be located. \nClick below to choose the sample folder.";
+		return TRANS("The sample directory could not be located. \nClick below to choose the sample folder.");
 		break;
 	case DeactiveOverlay::SamplesNotInstalled:
 #if HISE_SAMPLE_DIALOG_SHOW_INSTALL_BUTTON && HISE_SAMPLE_DIALOG_SHOW_LOCATE_BUTTON
-		return "Please click below to install the samples from the downloaded archive or point to the location where you've already installed the samples.";
+		return TRANS("Please click below to install the samples from the downloaded archive or point to the location where you've already installed the samples.");
 #elif HISE_SAMPLE_DIALOG_SHOW_INSTALL_BUTTON
-        return "Please click below to install the samples from the downloaded archive.";
+        return TRANS("Please click below to install the samples from the downloaded archive.");
 #elif HISE_SAMPLE_DIALOG_SHOW_LOCATE_BUTTON
-		return "Please click below to point to the location where you've already installed the samples.";
+		return TRANS("Please click below to point to the location where you've already installed the samples.");
 #else
 		return "This should never show :)";
 		jassertfalse;

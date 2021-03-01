@@ -288,11 +288,21 @@ public:
 		/** returns the parameter at the supplied index. */
 		MacroControlledParameterData *getParameter(int parameterIndex)
 		{
+            if ( parameterIndex >= controlledParameters.size())
+            {
+                return nullptr;
+            }
+            
 			return controlledParameters[parameterIndex];
 		}
 
 		const MacroControlledParameterData *getParameter(int parameterIndex) const
 		{
+            if ( parameterIndex >= controlledParameters.size())
+            {
+                return nullptr;
+            }
+
 			return controlledParameters[parameterIndex];
 		}
 
@@ -403,10 +413,25 @@ public:
                                 bool inverted=false);
 
 	/** Returns the MacroControlData object at the supplied index. */
-	MacroControlData *getMacroControlData(int index) { return macroControls[index];	}
+	MacroControlData *getMacroControlData(int index) {
+        if (index >= macroControls.size())
+        {
+            return nullptr;
+        }
+        
+        return macroControls[index];
+        
+    }
 
 	/** Returns the MacroControlData object at the supplied index. */
-	const MacroControlData *getMacroControlData(int index) const { return macroControls[index]; }
+	const MacroControlData *getMacroControlData(int index) const {
+        if (index >= macroControls.size())
+        {
+            return nullptr;
+        }
+
+        return macroControls[index];
+    }
 
 	void saveMacrosToValueTree(ValueTree &v) const;
 

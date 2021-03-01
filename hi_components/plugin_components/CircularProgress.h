@@ -40,6 +40,7 @@ class CircularProgress : public Component, private Timer
 {
 public:
     CircularProgress();
+    virtual ~CircularProgress();
 
     void paint( juce::Graphics& g ) override;
     void timerCallback() override;

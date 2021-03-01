@@ -65,13 +65,13 @@ enum TonalKey
             return "C";
             
         case TonalKey::Csharp:
-            return asFlats ? String(L"D♭") : String(L"C♯");
+            return asFlats ? String(L"D\u266d") : String(L"C\u266f");
             
         case TonalKey::D:
             return "D";
             
         case TonalKey::Dsharp:
-            return asFlats ? String(L"E♭") : String(L"D♯");
+            return asFlats ? String(L"E\u266d") : String(L"D\u266f");
 
         case TonalKey::E:
             return "E";
@@ -80,7 +80,7 @@ enum TonalKey
             return "F";
             
         case TonalKey::Fsharp:
-            return asFlats ? String(L"G♭") : String(L"F♯");
+            return asFlats ? String(L"G\u266d") : String(L"F\u266f");
 
         case TonalKey::G:
             return "G";
@@ -92,7 +92,7 @@ enum TonalKey
             return "A";
             
         case TonalKey::Asharp:
-            return asFlats ? String(L"B♭") : String(L"A♯");
+            return asFlats ? String(L"B\u266d") : String(L"A\u266f");
 
         case TonalKey::B:
             return "B";
