@@ -75,7 +75,7 @@ public:
         It's perfectly ok to call startTimer() or stopTimer() from within this
         callback to change the subsequent intervals.
     */
-    virtual void timerCallback() = 0;
+    virtual void timerCallback(){}
 
     //==============================================================================
     /** Starts the timer and sets the length of interval required.
