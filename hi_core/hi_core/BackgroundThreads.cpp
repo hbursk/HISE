@@ -725,7 +725,7 @@ File getDefaultSampleDestination()
 	const String path = company + "/" + product + "/Samples";
 
 #if JUCE_WINDOWS
-	const File sourceD = File::getSpecialLocation(File::globalApplicationsDirectory).getChildFile(path);
+	const File sourceD = File::getSpecialLocation(File::commonApplicationDataDirectory).getChildFile(path);
 #else
 	const File sourceD = File::getSpecialLocation(File::userMusicDirectory).getChildFile(path);
 #endif
